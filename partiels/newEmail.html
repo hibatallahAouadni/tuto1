@@ -1,0 +1,15 @@
+<form ng-submit="addEmail()" class="spacer">
+    <div class="form-group">
+      <label for="email">destinataires</label>
+      <input type="email" class="form-control" id="email" placeholder="à" ng-model="newEmail.to">
+    </div>
+    <div class="form-group">
+        <label for="objet">objet</label>
+        <input type="text" class="form-control" id="objet" placeholder="objet" ng-model="newEmail.subject">
+      </div>
+    <div class="form-group">
+        <label for="message">message</label>
+        <textarea class="form-control" id="message" rows="3" ng-model="newEmail.content"></textarea>
+      </div>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+</form>

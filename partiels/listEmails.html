@@ -1,0 +1,55 @@
+
+    <div ng-show="dossierCourant != null &amp;&amp; emailSelectionne == null">
+        <div class="spacer">
+            <input type="text" class="form-control" ng-model="query" placeholder="Search...">
+        </div>
+        <table class="table table-striped table-hover spacer">
+            <thead>
+                <tr>
+                    <th>
+                        <a ng-click="triParExpediteur()">De</a>
+                    </th>
+                    <th>
+                        <a ng-click="triParDestinataire()">&Agrave;</a>
+                    </th>
+                    <th>
+                        <a ng-click="triParSubject()">Objet</a>
+                    </th>
+                    <th>
+                        <a ng-click="triParDate()">Date</a>
+                    </th>
+                    <th>
+                        <select ng-model="order" class="form-control">
+                            <option value="" selected disabled hidden>Order By</option>
+                            <option value="+from">De</option>
+                            <option value="+to">&Agrave;</option>
+                            <option value="+subject">Objet</option>
+                            <option value="-date">Date</option>
+                        </select>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="email in dossierCourant.emails | filter:query | orderBy:order" class="clickable" ng-click="versEmail(dossierCourant, email)">
+                    <td>{{email.from}}</td>
+                    <td>{{email.to}}</td>
+                    <td>{{email.subject}}</td>
+                    <td colspan="2">{{email.date}}</td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <div class="alert alert-info">
+            Le dossier contient {{ dossierCourant.emails.length }} mails.
+        </div>
+    </div>
+    
+    <div ng-show="emailSelectionne != null" class="spacer">
+        <div class="well">
+            <h1>{{emailSelectionne.subject}}</h1>
+            <p><label>De: <span>{{emailSelectionne.from}}</span></label></p>
+            <p><label>&Agrave;: <span>{{emailSelectionne.to}}</span></label></p>
+            <p><label>Date: <span>{{emailSelectionne.date}}</span></label></p>
+        </div>
+        <p ng-bind-html="emailSelectionne.content"></p>
+    </div>
