@@ -16,14 +16,16 @@
     </head>
     <body ng-app="Webmail" ng-controller="WebmailCtrl">
         <div class="container">
-            <ul class="nav nav-pills spacer">
-                <li ng-repeat="dossier in dossiers" ng-class="{ active: dossier == dossierCourant }">
-                    <a href="#{{dossier.value}}">{{dossier.label}}</a>
-                </li>
-                <li class="pull-right">
-                    <a href="#/newEmail" class="btn btn-info">New message</a>
-                </li>
-            </ul>
+            <div class="navbar spacer">
+                <ul class="nav nav-pills navbar-left">
+                    <li ng-repeat="dossier in dossiers" ng-class="{ active: dossier == dossierCourant }">
+                        <a href="#{{dossier.value}}">{{dossier.label}}</a>
+                    </li>
+                </ul>
+                <ul class="nav nav-pills navbar-right">
+                    <li><a href="#/newEmail" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span></a></li>
+                </ul>
+            </div>
             <div ng-view></div>
         </div>
 

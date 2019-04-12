@@ -1,25 +1,37 @@
 
     <div ng-show="dossierCourant != null &amp;&amp; emailSelectionne == null">
-        <div class="spacer">
-            <input type="text" class="form-control" ng-model="query" placeholder="Search...">
+        <div class="spacer input-group">
+            <div class="input-group-addon">
+                <span class="glyphicon glyphicon-search"></span>
+            </div>
+            <input type="text" id="query" ng-model="$parent.query" class="form-control" placeholder="Rechercher un e-mail...">
+            <div class="input-group-btn">
+                <button class="btn btn-default" ng-click="razSearch()">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </button>
+            </div>
         </div>
         <table class="table table-striped table-hover spacer">
             <thead>
                 <tr>
-                    <th>
-                        <a ng-click="triParExpediteur()">De</a>
+                    <th class="col-md-2">
+                        <a ng-click="triEmails('from')">De</a>
+                        <span class="hspacer" ng-class="cssChevronsTri('from')"></span>
                     </th>
-                    <th>
-                        <a ng-click="triParDestinataire()">&Agrave;</a>
+                    <th class="col-md-2">
+                        <a ng-click="triEmails('to')">&Agrave;</a>
+                        <span class="hspacer" ng-class="cssChevronsTri('to')"></span>
                     </th>
-                    <th>
-                        <a ng-click="triParSubject()">Objet</a>
+                    <th class="col-md-4">
+                        <a ng-click="triEmails('subject')">Objet</a>
+                        <span class="hspacer" ng-class="cssChevronsTri('subject')"></span>
                     </th>
-                    <th>
-                        <a ng-click="triParDate()">Date</a>
+                    <th class="col-md-2">
+                        <a ng-click="triEmails('date')">Date</a>
+                        <span class="hspacer" ng-class="cssChevronsTri('date')"></span>
                     </th>
-                    <th>
-                        <select ng-model="order" class="form-control">
+                    <th class="col-md-2">
+                        <select ng-model="champTri" class="form-control">
                             <option value="" selected disabled hidden>Order By</option>
                             <option value="+from">De</option>
                             <option value="+to">&Agrave;</option>
@@ -30,17 +42,17 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="email in dossierCourant.emails | filter:query | orderBy:order" class="clickable" ng-click="versEmail(dossierCourant, email)">
-                    <td>{{email.from}}</td>
-                    <td>{{email.to}}</td>
-                    <td>{{email.subject}}</td>
-                    <td colspan="2">{{email.date}}</td>
+                <tr ng-repeat="email in emailsFilter = (dossierCourant.emails | filter:query) | orderBy:champTri:triDescendant" class="clickable" ng-click="versEmail(dossierCourant, email)">
+                    <td ng-bind-html="email.from | highlightingSearch:query"></td>
+                    <td ng-bind-html="email.to | highlightingSearch:query"></td>
+                    <td ng-bind-html="email.subject | highlightingSearch:query"></td>
+                    <td colspan="2">{{email.date | date:'dd/MM/yyyy HH:mm'}}</td>
                 </tr>
             </tbody>
         </table>
     
         <div class="alert alert-info">
-            Le dossier contient {{ dossierCourant.emails.length }} mails.
+            Le dossier contient {{ emailsFilter.length }} mails.
         </div>
     </div>
     
@@ -49,7 +61,7 @@
             <h1>{{emailSelectionne.subject}}</h1>
             <p><label>De: <span>{{emailSelectionne.from}}</span></label></p>
             <p><label>&Agrave;: <span>{{emailSelectionne.to}}</span></label></p>
-            <p><label>Date: <span>{{emailSelectionne.date}}</span></label></p>
+            <p><label>Date: <span>{{emailSelectionne.date | date:'dd/MM/yyyy HH:mm'}}</span></label></p>
         </div>
         <p ng-bind-html="emailSelectionne.content"></p>
     </div>

@@ -1,5 +1,13 @@
+a {
+    cursor: pointer;
+}
+
 .spacer {
     margin-top: 20px;
+}
+
+.hspacer {
+    margin-left: 20px;
 }
 
 .table-hover > tbody > tr:hover > td,
@@ -18,4 +26,8 @@
 
 .form-group > label{
     text-transform: capitalize;
+}
+
+.highlightingSearch {
+    background-color: #FFD42A;
 }
