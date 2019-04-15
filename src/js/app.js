@@ -58,21 +58,32 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
             from: "Hiba",
             date: new Date()
         };
-        $scope.formNewEmail.$setPristine();
+        if(tinyMCE.activeEditor) {
+            tinyMCE.activeEditor.setContent("");
+        }
+        if($scope.formNewEmail) {
+            $scope.formNewEmail.$setPristine();
+            //document.getElementById("formNewEmail").reset();
+        }
     }
     $scope.envoieMail = function() {
-        if($scope.formNewEmail.$valid) {
-            $scope.dossiers.forEach(function(item) {
-                if(item.value == "ENVOYES") {
-                    $scope.newEmail.id = $scope.idNextMail++;
-                    item.emails.push($scope.newEmail);
-                    $scope.newEmail = null;
-                    $location.path("/");
-                }
-            });
-        } else {
-            alert("Merci de vérifier votre saisie!");
+        var regExpValidEmail = new RegExp("^[A-Z0-9._%+-]+@[A-z0-9.-]+\.[A-Z]{2,4}$", "gi");
+        if(!$scope.newEmail.to || !$scope.newEmail.to.match(regExpValidEmail)) {
+            window.alert("Erreur \n\nMerci de vérifier l'adresse e-mail saisie.");
+            return;
         }
+        if(!$scope.newEmail.subject) {
+            window.confirm("Confirmation\n\nEtes-vous certain de vouloir envoyer un mail sans objet?");
+        }
+        $scope.dossiers.forEach(function(item) {
+            if(item.value == "ENVOYES") {
+                $scope.newEmail.id = $scope.idNextMail++;
+                item.emails.push($scope.newEmail);
+                $scope.newEmail = null;
+                $location.path("/");
+                $scope.idNextMail++;
+            }
+        });
     }
     $scope.optionsTinyMce = {
         language: "fr_FR",
@@ -88,7 +99,7 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
         if(tabPath.length > 1) {
             if(tabPath[1] == "newEmail") {
                 $scope.dossierCourant = null;
-                //$scope.razMail();
+                $scope.razMail();
             } else {
                 var valDossier = tabPath[1];
                 $scope.dossiers.forEach(function(item) {
