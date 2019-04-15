@@ -1,9 +1,9 @@
-var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce" ]);
+var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceMock" ]);
 
 /* Webmail Controller */
-app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $filter*/) {
-    $scope.dossiers = WebmailFactory.getDossiers();
-    $scope.idNextMail = 12;
+app.controller("WebmailCtrl", function($scope, $location, mailService/*, WebmailFactory, $filter*/) {
+    //$scope.dossiers = WebmailFactory.getDossiers();
+    $scope.dossiers = mailService.getDossiers();
 
     $scope.dossierCourant = null;
     $scope.emailSelectionne = null;
@@ -12,13 +12,13 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
         $location.path("/" + dossier.value + "/" + email.id);
     }
 
-    $scope.selectionDossier = function(dossier) {
-        $scope.dossierCourant = dossier;
+    $scope.selectionDossier = function(valDossier) {
+        $scope.dossierCourant = mailService.getDossier(valDossier);
         $scope.emailSelectionne = null;
     }
     
-    $scope.selectionEmail = function(email) {
-        $scope.emailSelectionne = email;
+    $scope.selectionEmail = function(valDossier, idMail) {
+        $scope.emailSelectionne = mailService.getMail(valDossier, idMail);
     }
 
     /* tri methods */
@@ -75,15 +75,8 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
         if(!$scope.newEmail.subject) {
             window.confirm("Confirmation\n\nEtes-vous certain de vouloir envoyer un mail sans objet?");
         }
-        $scope.dossiers.forEach(function(item) {
-            if(item.value == "ENVOYES") {
-                $scope.newEmail.id = $scope.idNextMail++;
-                item.emails.push($scope.newEmail);
-                $scope.newEmail = null;
-                $location.path("/");
-                $scope.idNextMail++;
-            }
-        });
+        mailService.envoiMail($scope.newEmail);
+        $location.path("/");
     }
     $scope.optionsTinyMce = {
         language: "fr_FR",
@@ -91,6 +84,7 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
         menubar: false
     };
 
+    /* naviation */
     $scope.$watch(function() {
         return $location.path();
     }, function(newPath) {
@@ -102,18 +96,14 @@ app.controller("WebmailCtrl", function($scope, $location, WebmailFactory/*, $fil
                 $scope.razMail();
             } else {
                 var valDossier = tabPath[1];
-                $scope.dossiers.forEach(function(item) {
-                    if(item.value == valDossier) {
-                        $scope.selectionDossier(item);
-                    }
-                });
+                if(valDossier) {
+                    $scope.selectionDossier(valDossier);
+                }
                 if(tabPath.length > 2) {
                     var idMail = tabPath[2];
-                    $scope.dossierCourant.emails.forEach(function(item) {
-                        if(item.id == idMail) {
-                            $scope.selectionEmail(item);
-                        }
-                    });
+                    if(idMail) {
+                        $scope.selectionEmail(valDossier, idMail);
+                    }
                 }
             }
         }
