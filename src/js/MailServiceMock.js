@@ -55,7 +55,7 @@ angular.module("MailServiceMock", [])
                     lastIdMail = email.id;
                 }
             });
-            mail.id = lastIdMail++;
+            mail.id = lastIdMail + 1;
             eltsSend.emails.push(mail);
         }
     }

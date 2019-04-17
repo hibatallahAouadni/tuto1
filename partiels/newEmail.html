@@ -1,4 +1,4 @@
-<form id="formNewEmail" class="spacer" name="$parent.formNewEmail">
+<!-- <form id="formNewEmail" class="spacer" name="$parent.formNewEmail">
     <div class="form-group">
       <label for="email">destinataires</label>
       <input type="email" class="form-control" id="email" placeholder="à" ng-model="newEmail.to" required>
@@ -14,9 +14,11 @@
     <div class="spacer">
       <pre>{{newEmail | json}}</pre>
     </div>
+    <mail-content email="newEmail"></mail-content>
     <div class="spacer text-center">
-        <button type="submit" class="btn btn-success" ng-click="envoieMail()">Envoyer</button>
+        <button type="submit" class="btn btn-success" ng-click="clickSendMail()">Envoyer</button>
         <span class="hspacer"></span>
         <button class="btn btn-warning" ng-disabled="formNewEmail.$pristine" ng-click="razMail()">Effacer la saisie</button>
     </div>
-</form>
+</form> -->
+<new-mail envoi-mail="envoiMail(newEmail)"></new-mail>

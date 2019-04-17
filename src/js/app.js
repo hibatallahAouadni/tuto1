@@ -1,4 +1,4 @@
-var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceMock" ]);
+var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceMock", "MyFilters", "MyDirectives" ]);
 
 /* Webmail Controller */
 app.controller("WebmailCtrl", function($scope, $location, mailService/*, WebmailFactory, $filter*/) {
@@ -51,40 +51,17 @@ app.controller("WebmailCtrl", function($scope, $location, mailService/*, Webmail
         return $filter("filter")($scope.dossierCourant.emails, $scope.query);
     } */
 
-    /* New Mail */
-    $scope.newEmail = null;
-    $scope.razMail = function() {
-        $scope.newEmail = {
-            from: "Hiba",
-            date: new Date()
-        };
-        if(tinyMCE.activeEditor) {
-            tinyMCE.activeEditor.setContent("");
-        }
-        if($scope.formNewEmail) {
-            $scope.formNewEmail.$setPristine();
-            //document.getElementById("formNewEmail").reset();
-        }
-    }
-    $scope.envoieMail = function() {
-        var regExpValidEmail = new RegExp("^[A-Z0-9._%+-]+@[A-z0-9.-]+\.[A-Z]{2,4}$", "gi");
-        if(!$scope.newEmail.to || !$scope.newEmail.to.match(regExpValidEmail)) {
-            window.alert("Erreur \n\nMerci de vérifier l'adresse e-mail saisie.");
-            return;
-        }
-        if(!$scope.newEmail.subject) {
-            window.confirm("Confirmation\n\nEtes-vous certain de vouloir envoyer un mail sans objet?");
-        }
-        mailService.envoiMail($scope.newEmail);
+    /* Create emails */
+    
+    $scope.displayNewMail = false;
+    
+    $scope.envoiMail = function (newEmail) {
+        mailService.envoiMail(newEmail);
         $location.path("/");
     }
-    $scope.optionsTinyMce = {
-        language: "fr_FR",
-        statusbar: false,
-        menubar: false
-    };
 
-    /* naviation */
+
+    /* navigation */
     $scope.$watch(function() {
         return $location.path();
     }, function(newPath) {
@@ -92,8 +69,11 @@ app.controller("WebmailCtrl", function($scope, $location, mailService/*, Webmail
         var tabPath = newPath.split("/");
         if(tabPath.length > 1) {
             if(tabPath[1] == "newEmail") {
-                $scope.dossierCourant = null;
-                $scope.razMail();
+                $scope.displayNewMail = true;
+                /* broadcast doesn't work!!! */
+                /* $scope.$broadcast("initFormNewMail"); */
+                //$scope.dossierCourant = null;
+                $scope.selectionDossier(null);
             } else {
                 var valDossier = tabPath[1];
                 if(valDossier) {
@@ -111,16 +91,6 @@ app.controller("WebmailCtrl", function($scope, $location, mailService/*, Webmail
 
 });
 
-/* Filter */
-app.filter("highlightingSearch", function() {
-    return function(input, query) {
-        if(query) {
-            return input.replace(new RegExp("(" + query + ")", "gi"), "<span class='highlightingSearch'>$1</span>");
-        }
-        return input;
-    }
-});
-
 /* Routes config */
 app.config(function($routeProvider){
     console.log('coco!');
@@ -128,21 +98,6 @@ app.config(function($routeProvider){
         .when('/', {templateUrl: 'partiels/listEmails.html'})
         .when('/newEmail', {templateUrl: 'partiels/newEmail.html'})
         .otherwise({redirectTo : '/'});
-});
-
-/* New Email Controller --notComplete-- */
-app.controller("NewEmail", function($scope, WebmailService) {
-    $scope.NewEmail = {};
-
-    $scope.addEmail = function() {
-        $scope.emails.push($scope.NewEmail);
-        WebmailService.add($scope.NewEmail).then(function(){
-            console.log('toto');
-        }, function() {
-            alert("votre email n\'a pas pu envoyé")
-        })
-        $scope.NewEmail = {};
-    }
 });
 
 /* Webmail Factory returns the function's return value */

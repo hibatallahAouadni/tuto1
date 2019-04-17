@@ -56,7 +56,7 @@
         </div>
     </div>
     
-    <div ng-show="emailSelectionne != null" class="spacer">
+    <!-- <div ng-show="emailSelectionne != null" class="spacer">
         <div class="well">
             <h1>{{emailSelectionne.subject}}</h1>
             <p><label>De: <span>{{emailSelectionne.from}}</span></label></p>
@@ -64,4 +64,5 @@
             <p><label>Date: <span>{{emailSelectionne.date | date:'dd/MM/yyyy HH:mm'}}</span></label></p>
         </div>
         <p ng-bind-html="emailSelectionne.content"></p>
-    </div>
+    </div> -->
+    <mail-content ng-show="emailSelectionne != null" email="emailSelectionne" class="spacer"></mail-content>
