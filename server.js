@@ -3,63 +3,61 @@ var fs = require("fs");
 
 var mime = require("mime-types");
 
-var connect = require("connect");
+var express = require("express");
 
 // middlewares
 var logger = require("morgan");
 var serveStatic = require("serve-static");
 var favicon = require("serve-favicon");
+var bodyParser = require("body-parser");
 
 var PORT = 80;
 
-/* var sendFile = function(res, url) {
-
-    console.log("send file: " + url);
-
-    var path = __dirname + "/" + url;
-    fs.stat(path, function(err, stats) {
-        if(!err && stats.isFile()) {
-
-            var flux = fs.createReadStream(path, {
-                flags: "r",
-                autoClose: true
-            });
-
-            var typeMime = mime.lookup(path);
-
-            res.writeHead(200, {"Content-Type": typeMime});
-            flux.pipe(res);
-
-        } else {
-            send404(res);
-        }
-    });
-
-} */
-
-/* var send404 = function(res) {
-    res.writeHead(404, {"Content-Type": "text/html"});
-    res.end("<h2>ERROR 404!!! <br>Page not found</h2>");
-} */
-
-var app = connect();
+var app = express();
 
 app.use(logger(":method :url"));
 app.use(favicon(__dirname + "/favicon.ico"));
 app.use("/tuto1/", serveStatic(__dirname + "/"));
 
-/* app.use(function(req, res, next) {
-    if(req.url == "/") {
-        res.writeHead(301, { "Location": "/index.html"});
-        res.end();
-    } else {
-        next();
-    }
+/* API */
+var api = express();
+
+// Get the folders list: GET  /api/folders
+api.get("/folders", function(req, res) {
+    res.send([
+        { value: "RECEPTION", label: 'Boite de réception'},
+        { value: "ARCHIVES", label: 'Archives'},
+        { value: "ENVOYES", label: 'Envoyés'},
+        { value: "SPAM", label: 'Courier indésirable'}
+    ]);
 });
 
-app.use(function(req, res) {
-    sendFile(res, req.url);
-}); */
+// Get a folder: GET  /api/folders/idFolder
+api.get("/folders/:idFolder", function(req, res) {
+    res.send([
+        { id:1, from: "Albator", to: "Hiba", subject: "Je reviens", date: new Date(2019, 2, 20, 21, 14), content: "Je reviens, <b>Je reviens</b>"},
+        { id:2, from: "Loulou", to: "Hiba", subject: "Bisous", date: new Date(2018, 2, 20, 8, 14), content: "Bisous!!!"},
+        { id:3, from: "Pikatchu", to: "Hiba", subject: "Pika pika!", date: new Date(2019, 5, 12, 21, 14), content: "Pika pika! Pika pika! Pika pika!"},
+        { id:4, from: "Barbapapa", to: "Hiba", subject: "Hulahup", date: new Date(2018, 2, 20, 22, 22), content: "Lorem ipsum dolor sit amet!"}
+    ]);
+});
+
+// Get an email: GET  /api/folders/idFolder/idMail
+api.get("/folders/:idFolder/:idMail", function(req, res) {
+    res.send([
+        { id:1, from: "Albator", to: "Hiba", subject: "Je reviens", date: new Date(2019, 2, 20, 21, 14), content: "Je reviens, <b>Je reviens</b>"},
+    ]);
+});
+
+app.use(bodyParser.json());
+
+// Send an email: POST  /api/sendMail
+api.post("/sendMail", function(req, res) {
+    res.send({ succes: true, email: req.body});
+});
+
+app.use("/api", api);
+
 
 http.createServer(app).listen(PORT);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
 
