@@ -5,6 +5,8 @@ var mime = require("mime-types");
 
 var express = require("express");
 
+var serviceMails = require(__dirname + "/get-mails.js");
+
 // middlewares
 var logger = require("morgan");
 var serveStatic = require("serve-static");
@@ -12,6 +14,8 @@ var favicon = require("serve-favicon");
 var bodyParser = require("body-parser");
 
 var PORT = 80;
+
+serviceMails.genererMails();
 
 var app = express();
 
@@ -23,38 +27,18 @@ app.use("/tuto1/", serveStatic(__dirname + "/"));
 var api = express();
 
 // Get the folders list: GET  /api/folders
-api.get("/folders", function(req, res) {
-    res.send([
-        { value: "RECEPTION", label: 'Boite de réception'},
-        { value: "ARCHIVES", label: 'Archives'},
-        { value: "ENVOYES", label: 'Envoyés'},
-        { value: "SPAM", label: 'Courier indésirable'}
-    ]);
-});
+api.get("/folders", serviceMails.getFolders);
 
 // Get a folder: GET  /api/folders/idFolder
-api.get("/folders/:idFolder", function(req, res) {
-    res.send([
-        { id:1, from: "Albator", to: "Hiba", subject: "Je reviens", date: new Date(2019, 2, 20, 21, 14), content: "Je reviens, <b>Je reviens</b>"},
-        { id:2, from: "Loulou", to: "Hiba", subject: "Bisous", date: new Date(2018, 2, 20, 8, 14), content: "Bisous!!!"},
-        { id:3, from: "Pikatchu", to: "Hiba", subject: "Pika pika!", date: new Date(2019, 5, 12, 21, 14), content: "Pika pika! Pika pika! Pika pika!"},
-        { id:4, from: "Barbapapa", to: "Hiba", subject: "Hulahup", date: new Date(2018, 2, 20, 22, 22), content: "Lorem ipsum dolor sit amet!"}
-    ]);
-});
+api.get("/folders/:idFolder", serviceMails.getFolder);
 
 // Get an email: GET  /api/folders/idFolder/idMail
-api.get("/folders/:idFolder/:idMail", function(req, res) {
-    res.send([
-        { id:1, from: "Albator", to: "Hiba", subject: "Je reviens", date: new Date(2019, 2, 20, 21, 14), content: "Je reviens, <b>Je reviens</b>"},
-    ]);
-});
+api.get("/folders/:idFolder/:idMail", serviceMails.getMail);
 
 app.use(bodyParser.json());
 
 // Send an email: POST  /api/sendMail
-api.post("/sendMail", function(req, res) {
-    res.send({ succes: true, email: req.body});
-});
+api.post("/sendMail", serviceMails.sendMail);
 
 app.use("/api", api);
 
