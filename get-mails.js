@@ -57,17 +57,19 @@ exports.genererMails = function() {
 	}
 };
 
-exports.getFolders = function(req, res) {
+exports.getDossiers = function(req, res) {
 	res.send(dossiers);
 };
 
-exports.getFolder = function(req, res) {
-	var dossier = emailsParDossier[req.params.idFolder];
-	res.send(dossier);
+exports.getDossier = function(req, res) {
+	var idDossier = req.params.idDossier;
+	var emails = emailsParDossier[req.params.idDossier];
+
+	res.send({ value: idDossier, emails: emails});
 }
 
 exports.getMail = function(req, res) {
-	var dossier = emailsParDossier[req.params.idFolder];
+	var dossier = emailsParDossier[req.params.idDossier];
 	var mail = null;
 	for (var i in dossier) {
 		var unMail = dossier[i];
@@ -75,10 +77,11 @@ exports.getMail = function(req, res) {
 			mail = unMail;
 		}
 	}
+	
 	res.send(mail);
 }
 
-exports.sendMail = function(req, res) {
+exports.envoiMail = function(req, res) {
 	var dossierEnvoyes = emailsParDossier["ENVOYES"];
 	var mail = req.body;
 	mail.id = idProchainMail;

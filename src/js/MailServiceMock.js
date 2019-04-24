@@ -1,6 +1,7 @@
 angular.module("MailServiceMock", [])
 .factory("mailService", function() {
 
+    console.log("MailServiceMock");
     var dossiers = [
         { value: "RECEPTION", label: 'Boite de réception', emails: [
             { id:1, from: "Albator", to: "Hiba", subject: "Je reviens", date: new Date(2019, 2, 20, 21, 14), content: "Je reviens, <b>Je reviens</b>"},

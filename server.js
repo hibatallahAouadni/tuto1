@@ -26,19 +26,19 @@ app.use("/tuto1/", serveStatic(__dirname + "/"));
 /* API */
 var api = express();
 
-// Get the folders list: GET  /api/folders
-api.get("/folders", serviceMails.getFolders);
+// Get the folders list: GET  /api/dossiers
+api.get("/dossiers", serviceMails.getDossiers);
 
-// Get a folder: GET  /api/folders/idFolder
-api.get("/folders/:idFolder", serviceMails.getFolder);
+// Get a folder: GET  /api/dossiers/idDossier
+api.get("/dossiers/:idDossier", serviceMails.getDossier);
 
-// Get an email: GET  /api/folders/idFolder/idMail
-api.get("/folders/:idFolder/:idMail", serviceMails.getMail);
+// Get an email: GET  /api/dossiers/idDossier/idMail
+api.get("/dossiers/:idDossier/:idMail", serviceMails.getMail);
 
 app.use(bodyParser.json());
 
-// Send an email: POST  /api/sendMail
-api.post("/sendMail", serviceMails.sendMail);
+// Send an email: POST  /api/envoi
+api.post("/envoi", serviceMails.envoiMail);
 
 app.use("/api", api);
 

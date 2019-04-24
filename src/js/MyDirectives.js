@@ -10,11 +10,7 @@ angular.module("MyDirectives", [])
         </div> \
         <p ng-bind-html="emailSelectionne.content"></p>',
         scope: {
-            emailSelectionne: "=email" //si on n'a pas la même nom
-            /* email: "=" //si on a même nom
-            email: "@emailSelect" //si on n'a pas la même nom
-            email: "@" //si on a même nom
-            email: "&" // on passe une fonction */
+            emailSelectionne: "=email"
         }
     };
 })
@@ -62,23 +58,20 @@ angular.module("MyDirectives", [])
                 };
                 if(tinyMCE.activeEditor) {
                     tinyMCE.activeEditor.setContent("");
+                    console.log("setContent");
                 }
                 if($scope.formNewEmail) {
                     $scope.formNewEmail.$setPristine();
+                    console.log("setPristine");
                 }
             };
 
             $scope.razMail();
-
-            /* call razMail function  doesn't work*/
-            /* $scope.$on("initFormNewMail", function() {
-                console.log("initFormNewMail");
-                $scope.razMail();
-            }); */
             
             /* SendMail */
             $scope.clickSendMail = function() {
                 var regExpValidEmail = new RegExp("^[A-Z0-9._%+-]+@[A-z0-9.-]+\.[A-Z]{2,4}$", "gi");
+                console.log("clickSendMail");
 
                 if(!$scope.newEmail.to || !$scope.newEmail.to.match(regExpValidEmail)) {
                     window.alert("Erreur \n\nMerci de vérifier l'adresse e-mail saisie.");
@@ -86,7 +79,9 @@ angular.module("MyDirectives", [])
                 }
 
                 if(!$scope.newEmail.subject) {
-                    window.confirm("Confirmation\n\nEtes-vous certain de vouloir envoyer un mail sans objet?");
+                    if( !window.confirm("Confirmation\n\nEtes-vous certain de vouloir envoyer un mail sans objet?")) {
+                        return;
+                    }
                 }
 
                 $scope.envoiMail({newEmail: $scope.newEmail});
