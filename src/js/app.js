@@ -1,7 +1,41 @@
 var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceRest", "MyFilters", "MyDirectives" ]);
 
+/* $httpProvider */
+app.config(function($httpProvider) {
+    $httpProvider.interceptors.push(function($q, $rootScope) {
+        var nbReqs = 0;
+
+        return {
+            request: function(config) {
+                nbReqs++;
+                $rootScope.loading = true;
+                return config;
+            },
+            /* requestError: function(motifRejet) {
+                return $q.reject(motifRejet);
+            }, */
+            response: function(res) {
+                if (--nbReqs == 0) {
+                    $rootScope.loading = false;
+                }
+                return res;
+            },
+            responseError: function(motifRejet) {
+                if (--nbReqs == 0) {
+                    $rootScope.loading = false;
+                }
+                return $q.reject(motifRejet);
+            }
+        }
+    });
+});
+
 /* Webmail Controller */
-app.controller("WebmailCtrl", function($scope, $location, mailService) {
+app.controller("WebmailCtrl", function($rootScope, $scope, $location, mailService) {
+
+    /* Loading */
+    $rootScope.loading = false;
+
     $scope.dossiers = mailService.getDossiers();
 
     $scope.dossierCourant = null;

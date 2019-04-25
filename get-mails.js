@@ -65,7 +65,9 @@ exports.getDossier = function(req, res) {
 	var idDossier = req.params.idDossier;
 	var emails = emailsParDossier[req.params.idDossier];
 
-	res.send({ value: idDossier, emails: emails});
+	setTimeout(function() {
+		res.send({ value: idDossier, emails: emails});
+	}, 1000);
 }
 
 exports.getMail = function(req, res) {
