@@ -1,4 +1,4 @@
-var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceHttp", "MyFilters", "MyDirectives" ]);
+var app = angular.module("Webmail", [ "ngSanitize", "ngRoute", "ui.tinymce", "MailServiceRest", "MyFilters", "MyDirectives" ]);
 
 /* Webmail Controller */
 app.controller("WebmailCtrl", function($scope, $location, mailService) {
